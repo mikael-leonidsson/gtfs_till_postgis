@@ -13,10 +13,10 @@ pacman::p_load(tidyverse,
 # Används av andra funktioner som default om inget eget objekt med databasuppkoppling har skickats till dessa funktioner
 # OBS! Ändra default för db_name till "geodata" sen
 uppkoppling_db <- function(
-    keyring_service_name = "rd_geodata",
+    keyring_service_name = "geodata",
     db_host = "WFALMITVS526.ltdalarna.se",
     db_port = 5432,
-    db_name = "praktik",                    # Ändra till "geodata" sen
+    db_name = "geodata",                    # Ändra till "geodata" sen
     db_options = "-c search_path=public"
 ) {
   
@@ -296,16 +296,16 @@ ladda_hem_gtfs <- function(){
     
     # skapa hela sökvägen
     sokvag_datum <- paste0(data_input, "/trafiklab_", rkm, "_", datum)
-    
+    # print(sokvag_datum)
     #=========== Start kommenteringen som sedan skall tas bort, för att slippa ladda hem varje gång ==========
     #skapa sökvägen till den nedladddade GTFS-filen med rkm och datum
     gtfs_regional_fil <- paste0(sokvag_datum, ".zip")
-    
+
     # skapa och hämta url:en till gtfs-feeden
     url_regional <- paste0("https://opendata.samtrafiken.se/gtfs/", rkm, "/", rkm, ".zip?key=", key_get("API_trafiklab_token", "GTFS_Regional"))
-    
+
     GET(url_regional, write_disk(gtfs_regional_fil, overwrite=TRUE))
-    
+
     # Zippa upp csv-filerna och lägg i undermapp
     unzip(gtfs_regional_fil, exdir = sokvag_datum)
     
@@ -326,7 +326,7 @@ ladda_hem_gtfs <- function(){
         stop_lon = as.numeric(stop_lon),
         location_type = as.integer(location_type)
       )
-    
+
     stop_times <- read.csv2(paste0(sokvag_datum, "/stop_times.txt"), sep = ",", encoding = "UTF-8", stringsAsFactors = FALSE, colClasses = 'character') %>%
       mutate(
         stop_sequence = as.integer(stop_sequence),
@@ -335,33 +335,33 @@ ladda_hem_gtfs <- function(){
         shape_dist_traveled = as.numeric(shape_dist_traveled),
         timepoint = as.integer(timepoint)
       )
-    
+
     trips <- read.csv2(paste0(sokvag_datum, "/trips.txt"), sep = ",", encoding = "UTF-8", stringsAsFactors = FALSE, colClasses = 'character') %>%
       mutate(
         direction_id = as.integer(direction_id)
       )
-    
+
     calendar_dates <- read.csv2(paste0(sokvag_datum, "/calendar_dates.txt"), sep = ",", encoding = "UTF-8", stringsAsFactors = FALSE, colClasses = 'character') %>%
       mutate(
         date = as.Date(date, format = "%Y%m%d"),
         exception_type = as.integer(exception_type)
       )
-    
-    shapes <- read.csv2(paste0(sokvag_datum, "/shapes.txt"), sep = ",", encoding="UTF-8", stringsAsFactors=FALSE, colClasses = 'character') %>% 
+
+    shapes <- read.csv2(paste0(sokvag_datum, "/shapes.txt"), sep = ",", encoding="UTF-8", stringsAsFactors=FALSE, colClasses = 'character') %>%
       mutate(
         shape_pt_sequence = as.integer(shape_pt_sequence),
         shape_dist_traveled = as.numeric(shape_dist_traveled)
       )
-    
-    agency = read.csv2(paste0(sokvag_datum, "/agency.txt"), 
+
+    agency = read.csv2(paste0(sokvag_datum, "/agency.txt"),
                        sep = ",", encoding="UTF-8", stringsAsFactors=FALSE, colClasses = 'character')
-    
-    feed_info = read.csv2(paste0(sokvag_datum, "/feed_info.txt"), 
+
+    feed_info = read.csv2(paste0(sokvag_datum, "/feed_info.txt"),
                           sep = ",", encoding="UTF-8", stringsAsFactors=FALSE, colClasses = 'character')
-    
+
     
     #Returnera en lista med alla dataframes
-    return(list(routes = routes, stops = stops, stop_times = stop_times, trips = trips, calendar_dates = calendar_dates, shapes = shapes, agency = agency, calendar = calendar, feed_info = feed_info))
+    return(list(routes = routes, stops = stops, stop_times = stop_times, trips = trips, calendar_dates = calendar_dates, shapes = shapes, agency = agency, feed_info = feed_info))
   }, error = function(e){
     stop(paste("Ett fel inträffade vid nedladdning och upppackning av GTFS-data: ", e$message))
   })
