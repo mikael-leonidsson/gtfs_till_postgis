@@ -1,7 +1,7 @@
 # GTFS to PostGIS
 
 ## Overview
-This project automates the download, processing, and storage of General Transit Feed Specification (GTFS) data into a PostgreSQL/PostGIS database. It enables users to visualize and analyze transit data in GIS applications, providing an automated pipeline for maintaining up-to-date public transportation datasets.
+This project automates the download, processing, and storage of General Transit Feed Specification (GTFS) data into a PostgreSQL/PostGIS database. It enables users to visualize and analyze transit data in GIS applications, providing an automated pipeline for maintaining up-to-date public transportation datasets. The project was done as my final thesis in a two-year program in GIS at a Higher Vocational Education institution in Sweden. The project was done for Region Dalarna and therefor there are som settings that needs to be changed. The thesis report is available in Swedish inside the repo.
 
 The project includes:
 - Automatic GTFS data download via API
@@ -87,6 +87,7 @@ The script uses `tryCatch` for robust error handling:
 - Logs can be stored in a dedicated file for monitoring.
 
 ## Future Improvements
+- Implement a configuration file for API keys and other settings to improve maintainability and security.
 - Email notifications for failed updates.
 - Additional filtering and analysis capabilities in GIS.
 - Support for real-time GTFS feeds.
